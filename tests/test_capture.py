@@ -4,6 +4,17 @@ import pytest
 from app.capture import DataCapture
 
 
+@pytest.fixture
+def data_capture_mock():
+    capture = DataCapture()
+    capture.add(3)
+    capture.add(9)
+    capture.add(3)
+    capture.add(4)
+    capture.add(6)
+    return capture
+
+
 def test_add():
     expected_collection = [3, 5]
 
@@ -14,69 +25,44 @@ def test_add():
     assert capture.collection == expected_collection
 
 
-def test_less():
+def test_less(data_capture_mock):
     expected_numbers = [3, 3]
 
-    capture = DataCapture()
-    capture.add(3)
-    capture.add(9)
-    capture.add(3)
-    capture.add(4)
-    capture.add(6)
-    capture.build_stats()
+    data_capture_mock.build_stats()
 
-    result = capture.less(4)
+    result = data_capture_mock.less(4)
 
     assert result == expected_numbers
 
 
-def test_greater():
+def test_greater(data_capture_mock):
     expected_numbers = [6, 9]
 
-    capture = DataCapture()
-    capture.add(3)
-    capture.add(9)
-    capture.add(3)
-    capture.add(4)
-    capture.add(6)
-    capture.build_stats()
+    data_capture_mock.build_stats()
 
-    result = capture.greater(4)
+    result = data_capture_mock.greater(4)
 
     assert result == expected_numbers
 
 
-def test_between():
+def test_between(data_capture_mock):
     expected_numbers = [3, 3, 4, 6]
 
-    capture = DataCapture()
-    capture.add(3)
-    capture.add(9)
-    capture.add(3)
-    capture.add(4)
-    capture.add(6)
-    capture.build_stats()
+    data_capture_mock.build_stats()
 
-    result = capture.between(3, 6)
+    result = data_capture_mock.between(3, 6)
 
     assert result == expected_numbers
 
 
-def test_between_fails(caplog):
+def test_between_fails(data_capture_mock, caplog):
     expected_message = "Starting number must be less than ending number"
 
-    capture = DataCapture()
-    capture.add(3)
-    capture.add(9)
-    capture.add(3)
-    capture.add(4)
-    capture.add(6)
-
     with caplog.at_level(logging.INFO):
-        capture.build_stats()
+        data_capture_mock.build_stats()
 
     with pytest.raises(ValueError) as ve_info:
-        capture.between(6, 3)
+        data_capture_mock.between(6, 3)
 
     assert "Building stats" in caplog.text
     assert str(ve_info.value) == expected_message
