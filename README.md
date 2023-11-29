@@ -2,7 +2,7 @@
 
 The main module `DataCapture` is under the `app` dir.
 
-And you can run execute it with this command:
+And you can execute it with this command:
 ~~~bash
 python app/run.py
 ~~~
